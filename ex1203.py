@@ -1,44 +1,3 @@
-import urllib.request, urllib.parse, urllib.error
-from bs4 import BeautifulSoup
-import ssl
-
-# use the following three lines to have access to https sites and add "context=ctx" in line 12 as second parameter in urlopen()
-ctx = ssl.create_default_context()
-ctx.check_hostname = False
-ctx.verify_mode = ssl.CERT_NONE
-
-url = input("Enter - ")
-count = int(input("Enter count:"))
-position = int(input("Enter position:"))
-
-print(url)
-
-# follow the link the number of times indicated in the count variable
-for i in range(count):
-    # return a signle big string line with new lines at the end of each line of the webpage we are looking into.
-    html = urllib.request.urlopen(url, context=ctx).read() # context=ctx 
-    soup = BeautifulSoup(html, "html.parser")
-    # list to store all links in the anchor tags. It is cleared on each iteration, except on the last one.
-    links = list()
-    # list to store all authors' names. It is cleared on each iteration, except on the last one.
-    names = list()
-    # Retrieve all of the anchor tags
-    tags = soup("a")
-    for tag in tags:
-        # populate the links list with the anchor tags
-        links.append(tag.get("href", None))
-        # populate the names list with the content of the tag
-        names.append(tag.contents[0])
-
-    # Store the link located in the position indicated by the user. 
-    theChosenLink = links[position -1]
-    # replace the value of the url varible with the value of the theChosenLink varible to iterate over the new value every time
-    url = theChosenLink
-    print(theChosenLink)
-
-# print the name of the author of the last url
-print(f"Author's name: {names[position - 1]}")
-    
 """Following Links in Python
 
 In this assignment you will write a Python program that expands on http://www.py4e.com/code3/urllinks.py. 
@@ -80,3 +39,44 @@ Retrieving: http://py4e-data.dr-chuck.net/known_by_Mhairade.html
 Retrieving: http://py4e-data.dr-chuck.net/known_by_Butchi.html
 Retrieving: http://py4e-data.dr-chuck.net/known_by_Anayah.html
 The answer to the assignment for this execution is "Anayah"."""
+
+import urllib.request, urllib.parse, urllib.error
+from bs4 import BeautifulSoup
+import ssl
+
+# use the following three lines to have access to https sites and add "context=ctx" in line 12 as second parameter in urlopen()
+ctx = ssl.create_default_context()
+ctx.check_hostname = False
+ctx.verify_mode = ssl.CERT_NONE
+
+url = input("Enter - ")
+count = int(input("Enter count:"))
+position = int(input("Enter position:"))
+
+print(url)
+
+# follow the link the number of times indicated in the count variable
+for i in range(count):
+    # return a signle big string line with new lines at the end of each line of the webpage we are looking into.
+    html = urllib.request.urlopen(url, context=ctx).read() # context=ctx 
+    soup = BeautifulSoup(html, "html.parser")
+    # list to store all links in the anchor tags. It is cleared on each iteration, except on the last one.
+    links = list()
+    # list to store all authors' names. It is cleared on each iteration, except on the last one.
+    names = list()
+    # Retrieve all of the anchor tags
+    tags = soup("a")
+    for tag in tags:
+        # populate the links list with the anchor tags
+        links.append(tag.get("href", None))
+        # populate the names list with the content of the tag
+        names.append(tag.contents[0])
+
+    # Store the link located in the position indicated by the user. 
+    theChosenLink = links[position -1]
+    # replace the value of the url varible with the value of the theChosenLink varible to iterate over the new value every time
+    url = theChosenLink
+    print(theChosenLink)
+
+# print the name of the author of the last url
+print(f"Author's name: {names[position - 1]}")
