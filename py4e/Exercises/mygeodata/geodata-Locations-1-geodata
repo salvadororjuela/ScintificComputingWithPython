@@ -1,0 +1,85 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "Dormitory no. 14 \"Kapitol\" of AGH University of Science and Technology in Cracov, Poland",
+               "short_name" : "DS14 Kapitol",
+               "types" : [ "premise" ]
+            },
+            {
+               "long_name" : "2",
+               "short_name" : "2",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Witolda Budryka",
+               "short_name" : "Witolda Budryka",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "Krowodrza",
+               "short_name" : "Krowodrza",
+               "types" : [ "sublocality_level_1", "sublocality", "political" ]
+            },
+            {
+               "long_name" : "Kraków",
+               "short_name" : "Kraków",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Kraków",
+               "short_name" : "Kraków",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "małopolskie",
+               "short_name" : "małopolskie",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Poland",
+               "short_name" : "PL",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "30-072",
+               "short_name" : "30-072",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "Dormitory no. 14 \"Kapitol\" of AGH University of Science and Technology in Cracov, Poland, Witolda Budryka 2, 30-072 Kraków, Poland",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 50.067861,
+                  "lng" : 19.907282
+               },
+               "southwest" : {
+                  "lat" : 50.0674961,
+                  "lng" : 19.9068828
+               }
+            },
+            "location" : {
+               "lat" : 50.0676785,
+               "lng" : 19.9070824
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 50.06902753029149,
+                  "lng" : 19.9084313802915
+               },
+               "southwest" : {
+                  "lat" : 50.06632956970849,
+                  "lng" : 19.9057334197085
+               }
+            }
+         },
+         "partial_match" : true,
+         "place_id" : "ChIJz2iPertbFkcRvUH1Z8Vkvts",
+         "types" : [ "premise" ]
+      }
+   ],
+   "status" : "OK"
+}
