@@ -103,4 +103,4 @@ def add_time(start, duration, day=None):
         print ("THIS")
     
 
-print(add_time("00:00 PM", "23:00"))
+print(add_time("00:00 AM", "03:00"))
