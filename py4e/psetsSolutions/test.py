@@ -77,6 +77,10 @@ def add_time(start, duration, day=None):
     # Return the result when the meridiem is PM and the second or more days start after 35.59 hours
     if meridiem == "PM" and hour >= 12 and hour < 24:
         meridiem = "AM"
+        daysLater = str(daysLater)
+        daysLater = daysLater.split(".")
+        daysLater = int(daysLater[0])
+        daysLater = daysLater + 1
         new_time = TwoOrMoreDays(hour, minutes, meridiem, day, daysLater)
         return new_time
 
@@ -115,22 +119,47 @@ def NextDay(hour, minutes, meridiem, day, daysLater):
     if day == None:
         new_time = f"{hour}:{minutes} {meridiem} (next day)"
     else:
-        new_time = f"{hour}:{minutes} {meridiem}, {day} (next day)"
+        newDay = DaysOfTheWeek(day, daysLater)
+        new_time = f"{hour}:{minutes} {meridiem}, {newDay} (next day)"
     return new_time
 
 
 def TwoOrMoreDays(hour, minutes, meridiem, day, daysLater):
     # Return the new hour without the day and viceversa
     if day == None:
-        new_time = f"{hour}:{minutes} {meridiem} (two or more days)"
+        new_time = f"{hour}:{minutes} {meridiem} ({daysLater} days later)"
     else:
-        new_time = f"{hour}:{minutes} {meridiem}, {day} (two or more)"
+        newDay = DaysOfTheWeek(day, daysLater)
+        new_time = f"{hour}:{minutes} {meridiem}, {newDay} ({daysLater} days later)"
     return new_time
 
 
 # Returns the correct day
 def DaysOfTheWeek(day, daysLater):
-    pass
+    # Convert the day into camelcase when the new time is one day or more later
+    day = day.title()
+    # Get only the int number for daysLater to calculate the index to search
+    daysLater = str(daysLater)
+    daysLater = daysLater.strip(".")
+    daysLater = int(daysLater[0])
+    week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+    # Index for the present day
+    dayIndex = week.index(day)
+    # Variable to determine if the next time is a Monday.
+    mondays = (daysLater + dayIndex) % 7
+    
+    # When the next time is in the same week
+    if (dayIndex + daysLater) < 7:
+        day = week[dayIndex + daysLater]
+    # When the next time is exactly a Monday
+    elif mondays == 0:
+        day = week[0]
+    # When the next time is greater than 7 days and it is a day different from Monday
+    else:
+        daysModulo = (daysLater + dayIndex) % 7
+        day = week[daysModulo]
+        
+    return day
 
 
 # print(add_time("3:30 PM", "2:12"))
@@ -139,9 +168,9 @@ def DaysOfTheWeek(day, daysLater):
 # print(add_time("11:40 AM", "0:25"))
 # print(add_time("2:59 AM", "24:00"))
 # print(add_time("11:59 PM", "24:05"))
-# print(add_time("8:16 PM", "466:02")) ##############################################
+print(add_time("8:16 PM", "466:02"))  #########################################
 # print(add_time("5:01 AM", "0:00"))
 # print(add_time("3:30 PM", "2:12", "Monday"))
 # print(add_time("2:59 AM", "24:00", "saturDay"))
-# print(add_time("11:59 PM", "24:05", "Wednesday"))
+# print(add_time("11:59 PM", "24:05", "Wednesday")) 
 # print(add_time("8:16 PM", "466:02", "tuesday")) #######################################
