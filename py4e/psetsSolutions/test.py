@@ -130,6 +130,10 @@ def TwoOrMoreDays(hour, minutes, meridiem, day, daysLater):
         new_time = f"{hour}:{minutes} {meridiem} ({daysLater} days later)"
     else:
         newDay = DaysOfTheWeek(day, daysLater)
+        # Get only the int number for daysLater to calculate the index to search
+        daysLater = str(daysLater)
+        daysLater = daysLater.split(".")
+        daysLater = int(daysLater[0])
         new_time = f"{hour}:{minutes} {meridiem}, {newDay} ({daysLater} days later)"
     return new_time
 
@@ -140,7 +144,7 @@ def DaysOfTheWeek(day, daysLater):
     day = day.title()
     # Get only the int number for daysLater to calculate the index to search
     daysLater = str(daysLater)
-    daysLater = daysLater.strip(".")
+    daysLater = daysLater.split(".")
     daysLater = int(daysLater[0])
     week = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     # Index for the present day
@@ -162,15 +166,15 @@ def DaysOfTheWeek(day, daysLater):
     return day
 
 
-# print(add_time("3:30 PM", "2:12"))
-# print(add_time("11:55 AM", "3:12"))
-# print(add_time("9:15 PM", "5:30"))
-# print(add_time("11:40 AM", "0:25"))
-# print(add_time("2:59 AM", "24:00"))
-# print(add_time("11:59 PM", "24:05"))
-print(add_time("8:16 PM", "466:02"))  #########################################
-# print(add_time("5:01 AM", "0:00"))
-# print(add_time("3:30 PM", "2:12", "Monday"))
-# print(add_time("2:59 AM", "24:00", "saturDay"))
-# print(add_time("11:59 PM", "24:05", "Wednesday")) 
-# print(add_time("8:16 PM", "466:02", "tuesday")) #######################################
+# print(add_time("3:30 PM", "2:12")) # expected = "5:42 PM"
+# print(add_time("11:55 AM", "3:12")) # expected = "3:07 PM"
+# print(add_time("9:15 PM", "5:30")) # expected = "2:45 AM (next day)"
+# print(add_time("11:40 AM", "0:25")) # expected = "12:05 PM"
+# print(add_time("2:59 AM", "24:00")) # expected = "2:59 AM (next day)"
+# print(add_time("11:59 PM", "24:05")) # expected = "12:04 AM (2 days later)"
+# print(add_time("8:16 PM", "466:02"))  # expected = "6:18 AM (20 days later)"  #########################################
+# print(add_time("5:01 AM", "0:00")) # expected = "5:01 AM"
+# print(add_time("3:30 PM", "2:12", "Monday")) # expected = "5:42 PM, Monday"
+# print(add_time("2:59 AM", "24:00", "saturDay")) # expected = "2:59 AM, Sunday (next day)"
+# print(add_time("11:59 PM", "24:05", "Wednesday")) # expected = "12:04 AM, Friday (2 days later)"
+print(add_time("8:16 PM", "466:02", "tuesday")) # expected = "6:18 AM, Monday (20 days later)" #######################################
