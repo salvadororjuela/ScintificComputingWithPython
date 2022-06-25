@@ -63,13 +63,13 @@ def add_time(start, duration, day=None):
             meridiem = "AM"
         # If not, turn dayMeridiem into an integer and determine if the meridiem is am or pm by turning dayMeridiem
         # into an integer, and if the result is less than 5 then the meridiem is am and viceversa
-        else:
-            dayMeridiem = int(dayMeridiem[1])
+        # else:
+        #     dayMeridiem = int(dayMeridiem[1])
 
-            if dayMeridiem < 50:
-                meridiem = "AM"
-            else:
-                meridiem = "PM"
+        #     if dayMeridiem < 50:
+        #         meridiem = "AM"
+        #     else:
+        #         meridiem = "PM"
  
     # Return the result for the same day
     if daysLater < 1:
