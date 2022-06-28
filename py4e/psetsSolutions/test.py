@@ -120,6 +120,9 @@ def SameDay(hour, minutes, meridiem, day):
 
 
 def NextDay(hour, minutes, meridiem, day, daysLater):
+    # Necesary to convert the 0:00 AM into 12:00 AM
+    if hour == 0 and meridiem == "AM":
+        hour = 12
     # Return the new hour without the day and viceversa
     if day == None:
         new_time = f"{hour}:{minutes} {meridiem} (next day)"
@@ -216,7 +219,7 @@ def DaysOfTheWeek(day, daysLater):
 # print(add_time("3:30 PM", "2:12", "Monday")) # expected = "5:42 PM, Monday"
 # print(add_time("2:59 AM", "24:00", "saturDay")) # expected = "2:59 AM, Sunday (next day)"
 # print(add_time("11:59 PM", "24:05", "Wednesday")) # expected = "12:04 AM, Friday (2 days later)" ####################################
-print(add_time("9:16 PM", "466:02", "tuesday")) # expected = "7:18 AM, Monday (20 days later)"
+# print(add_time("9:16 PM", "466:02", "tuesday")) # expected = "7:18 AM, Monday (20 days later)"
 
 
 # print(add_time("0:00 AM", "49:02"))

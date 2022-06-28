@@ -9,6 +9,9 @@ def add_time(start, duration, day=None):
     meridiem = start[1]
     hourduration = int(duration[0])
     minuteduration = int(duration[1])
+    # Variable to calculate AM or PM in TwoOrMoreDays()
+    hourstart = int(hourstart[0])
+    validator = True
 
     # Do the addition of time and minutes
     # This also calculates when the new hour is the am on the same day
@@ -28,26 +31,20 @@ def add_time(start, duration, day=None):
     # Format the minutes to add a 0 before the number if the minutes variable is <= 9
     if len(str(minutes)) < 2:
         minutes = f"0{minutes}"
-
-    # Determine the meridiem in the future when the meridiem is PM and the next time is on the next am
-    hourToCalculate = hourduration % 24
-    print(hourToCalculate)
-    if meridiem == "PM" and hourToCalculate < 12:
-        meridiem = "AM"
-    if meridiem == "AM" and hourToCalculate < 12:
-        meridiem = "AM"
-    if meridiem == "AM" and hourToCalculate >= 12:
-        meridiem = "PM"
-    if meridiem == "PM" and hourToCalculate >= 12:
-        meridiem = "PM"
     
     # Determines the meridiem for the same day and up to the next day. 48 hours maximum
     if meridiem == "PM" and hour > 12 and hour < 24: # Necesary if the start variable is > 12 and meridiem is PM
         hour = hour - 12
+        meridiem = "AM"
         new_time = NextDay(hour, minutes, meridiem, day, daysLater)
         return new_time
     if meridiem == "PM" and hour < 12: # Necesary if the start variable is < 12 and meridiem is PM
         hour = hour + 12
+        meridiem = "PM"
+    if hour < 12 or hour >= 24 and hour < 36:
+        meridiem = "AM"
+    if hour >= 12 and hour < 24 or hour >= 36 and hour < 48:
+        meridiem = "PM"
     
     # Subtract the number of hours if hours to get the meridiem AM or PM up to the next day.
     if hour > 12 and hour < 24:
@@ -56,6 +53,24 @@ def add_time(start, duration, day=None):
         hour = hour - 24
     if hour > 36 and hour < 48:
         hour = hour -36
+    # Determine the meridiem when the new time of two or more days ahead.
+    if hour >= 48:
+        # Calculate when the new hour is in am or in pm.
+        dayMeridiem = str(daysLater)
+        dayMeridiem = dayMeridiem.split(".")
+
+        # Evaluate if dayMeridiam is starts with a 0 as a string. If so, the meridiem is am
+        if dayMeridiem[1].startswith("0"):
+            meridiem = "AM"
+        # If not, turn dayMeridiem into an integer and determine if the meridiem is am or pm by turning dayMeridiem
+        # into an integer, and if the result is less than 5 then the meridiem is am and viceversa
+        else:
+            dayMeridiem = int(dayMeridiem[1])
+
+            if dayMeridiem < 50:
+                meridiem = "AM"
+            else:
+                meridiem = "PM"
  
     # Return the result for the same day
     if daysLater < 1:
@@ -64,15 +79,19 @@ def add_time(start, duration, day=None):
 
     # Return the result when the meridiem is PM and the second or more days start after 35.59 hours
     if meridiem == "PM" and hour >= 12 and hour < 24:
+        meridiem = "AM"
         daysLater = str(daysLater)
         daysLater = daysLater.split(".")
         daysLater = int(daysLater[0])
         daysLater = daysLater + 1
-        new_time = TwoOrMoreDays(hour, minutes, meridiem, day, daysLater, hourduration)
+        dayMeridiem = 75
+        # To avoid miscalculatios dayMeridiem is set to = 75 which is the value when condition in line 80 is met.
+        new_time = TwoOrMoreDays(dayMeridiem, minutes, meridiem, day, daysLater, hourstart, hourduration, validator = False)
         return new_time
 
     if meridiem == "PM" and hour >= 24 and hour < 36:
-        new_time = TwoOrMoreDays(hour, minutes, meridiem, day, daysLater, hourduration)
+        meridiem = "PM"
+        new_time = TwoOrMoreDays(dayMeridiem, minutes, meridiem, day, daysLater, hourstart, hourduration, validator)
         return new_time
 
     # Return the result if the new time is in the next day
@@ -86,7 +105,7 @@ def add_time(start, duration, day=None):
 
     # Call the function to return the result if the new time is more than one day later
     if daysLater >= 2:
-        new_time = TwoOrMoreDays(hour, minutes, meridiem, day, daysLater, hourduration)
+        new_time = TwoOrMoreDays(dayMeridiem, minutes, meridiem, day, daysLater, hourstart, hourduration, validator)
         return new_time
 
 
@@ -101,27 +120,63 @@ def SameDay(hour, minutes, meridiem, day):
 
 
 def NextDay(hour, minutes, meridiem, day, daysLater):
+    # Necesary to convert the 0:00 AM into 12:00 AM
+    if hour == 0 and meridiem == "AM":
+        hour = 12
     # Return the new hour without the day and viceversa
     if day == None:
         new_time = f"{hour}:{minutes} {meridiem} (next day)"
     else:
         newDay = DaysOfTheWeek(day, daysLater)
-        new_time = f"{hour}:{minutes} 4{meridiem}, {newDay} (next day)"
+        new_time = f"{hour}:{minutes} {meridiem}, {newDay} (next day)"
     return new_time
 
 
-def TwoOrMoreDays(hour, minutes, meridiem, day, daysLater, hourduration):
+def TwoOrMoreDays(dayMeridiem, minutes, meridiem, day, daysLater, hourstart, hourduration, validator):
+    # Calculate the hour in the future
+    hourToCalculate = hourduration % 24
+    newHour = hourToCalculate + hourstart - 12
+    if dayMeridiem == 75 and validator == False:
+        newHour = newHour - 12
+        dayMeridiem = 25
+    # Used to convert the hour when the result is < 0. That means that the meridiem is in the AM frame
+    if newHour <= 0:
+        # + 13 Necesary to include the hour 0, or the newHour will be - 1 hour instead of the real hour
+        newHour = newHour + 13
+    if newHour >= 12:
+        newHour = newHour - 13
+    
+    # Determine the meridiem
+    # If not, turn dayMeridiem into an integer and determine if the meridiem is am or pm by turning dayMeridiem
+    # into an integer, and if the result is less than 5 then the meridiem is am and viceversa. Also determines
+    # the meridiem when the time is PM
+    if meridiem == "PM" and dayMeridiem >= 50:
+        meridiem = "AM"
+    elif meridiem == "PM" and dayMeridiem < 50:
+        meridiem = "PM"
+    elif dayMeridiem <= 1:
+        meridiem = "AM"
+    elif dayMeridiem < 50:
+        meridiem = "AM"
+    else:
+        meridiem = "PM"
+
+    # Get only the int number for daysLater to calculate the index to search
+    daysLater = str(daysLater)
+    daysLater = daysLater.split(".")
+    daysLater = int(daysLater[0])
+
+    # Necesary to convert the 0:00 AM into 12:00 AM
+    if newHour == 0 and meridiem == "AM":
+        newHour = 12
+
     # Return the new hour without the day and viceversa
     if day == None:
-        new_time = f"{hour}:{minutes} {meridiem} ({daysLater} days later)"
+        new_time = f"{newHour}:{minutes} {meridiem} ({daysLater} days later)"
     else:
         newDay = DaysOfTheWeek(day, daysLater)
-        # Get only the int number for daysLater to calculate the index to search
-        daysLater = str(daysLater)
-        daysLater = daysLater.split(".")
-        daysLater = int(daysLater[0])
-        new_time = f"{hour}:{minutes} {meridiem}, {newDay} ({daysLater} days later)"
-        print(meridiem)
+        new_time = f"{newHour}:{minutes} {meridiem}, {newDay} ({daysLater} days later)"
+
     return new_time
 
 
@@ -159,9 +214,9 @@ def DaysOfTheWeek(day, daysLater):
 # print(add_time("11:40 AM", "0:25")) # expected = "12:05 PM"
 # print(add_time("2:59 AM", "24:00")) # expected = "2:59 AM (next day)"
 # print(add_time("11:59 PM", "24:05")) # expected = "12:04 AM (2 days later)"
-# print(add_time("8:16 PM", "466:02"))  # expected = "6:18 AM (20 days later)"  #########################################
+# print(add_time("8:16 PM", "466:02"))  # expected = "6:18 AM (20 days later)" 
 # print(add_time("5:01 AM", "0:00")) # expected = "5:01 AM"
 # print(add_time("3:30 PM", "2:12", "Monday")) # expected = "5:42 PM, Monday"
 # print(add_time("2:59 AM", "24:00", "saturDay")) # expected = "2:59 AM, Sunday (next day)"
-# print(add_time("11:59 PM", "24:05", "Wednesday")) # expected = "12:04 AM, Friday (2 days later)"
-# print(add_time("9:16 PM", "466:02", "tuesday")) # expected = "7:18 AM, Monday (20 days later)" #######################################
+# print(add_time("11:59 PM", "24:05", "Wednesday")) # expected = "12:04 AM, Friday (2 days later)" ####################################
+# print(add_time("9:16 PM", "466:02", "tuesday")) # expected = "7:18 AM, Monday (20 days later)"
