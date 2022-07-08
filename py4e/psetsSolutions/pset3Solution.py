@@ -2,6 +2,7 @@ class Category:
     categoryName = ""
     amount = 0
     description = ""
+    ledger = list()
 
     # Method to assign the name of each category when an instance is created
     def __init__(self, nameOfCategory):
@@ -58,14 +59,15 @@ class Category:
             # As the amount is a withdraw, it has to be converted into a negative amount
             amount = amount * -1
             # Add to the ledger of the origin of the funds the amount and the description
-            self.ledger.append({"amount": amount, "description": f"Tranfer to {transferCategoryName}"})
+            self.ledger.append({"amount": amount, "description": f"Transfer to {transferCategoryName}"})
 
             # To transfer to the destination budget category, turn the value again in a positive value
             # because funds are added to this budget category.
             amount = amount * -1
             # Add to the ledger of the budget 
             # catagory where the funds are destinated the value and description of the tranfer
-            budgetCategory.deposit(amount, f"Tranfer from {self.categoryName}")
+            budgetCategory.deposit(amount, f"Transfer from {self.categoryName}")
+          
             return True
 
         # Add to the destination ledger the amount and the description 
@@ -92,6 +94,19 @@ class Category:
             return False
         else:
             return True
+
+    # Method to print the budget object
+    def __str__(self):
+        # Print the name in the center of 30 characters
+        name = f"{self.categoryName:*^30}\n"
+        dictionaries = self.ledger
+        element = ""
+        # loop trhough each dictionary in the ledger of the budget category
+        for dictionary in dictionaries:
+            # Concatenate each dictionary in the format required
+            element += f"{dictionary['description'][0:23]:23}" + f"{dictionary['amount']:>7.2f}\n" 
+        
+        return name + element + "Total: " + str(self.get_balance())
         
 
 def create_spend_chart(categories):
