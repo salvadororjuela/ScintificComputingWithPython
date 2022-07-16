@@ -1,17 +1,11 @@
 class Category:
-    categoryName = ""
-    amount = 0
-    description = ""
-    ledger = list()
-
-    # Method to assign the name of each category when an instance is created
+    # Method to assign the name of each category when an instance is created and attributes
     def __init__(self, nameOfCategory):
         self.categoryName = nameOfCategory
+        self.ledger = list()
 
     # Method to register the deposits
     def deposit(self, amount, description=""):
-        # Variable to store movements
-        self.ledger = list()
         # Appends to the ledger() list each deposit as a dictionary
         self.ledger.append({"amount": amount, "description": description})
 
@@ -114,46 +108,42 @@ def create_spend_chart(categories):
     percentageCategory = dict()
     # Variables to get the withdrawals percentage per category
     percentage = 0
-    # List to sort the percentage and name of the category in reverse order
-    percentagesReverse = list()
+    charCount = 0
+    categoryList = list()
+    percentageList = list()
+    space = ""
+    totalWithdrawals = 0
 
     # Get names and percentages of each category passed in as a parameter
     for cat in categories:
-        # Get the names
-        positive = list()
-        negative = list()
+        # Get the withdrawals values
+        withdrawals = list()
         # Get the percentages
         for key in cat.ledger:
             # Use the values() method to get only the numeric values.
             for value in key.values():
                 if type(value) == int or type(value) == float:
-                    if value >= 0:
-                        positive.append(value)
-                    else:
+                    if value < 0:
                         value *= -1 # Convert the values into positive to get the correct percentage
-                        negative.append(value)
-        percentage = round((sum(negative) / sum(positive)) * 100)
+                        withdrawals.append(value)
+        percentage = sum(withdrawals)
+        # Calculate the total value of all withdrawals of all categories
+        totalWithdrawals += percentage
         # Add each new key value pair to the percentageCategory dictionary
         percentageCategory[percentage] = cat.categoryName
     
-    # Sort the list of tuples in reverse order
+    # Add the key and values to the list that are necessary to print the chart
     for key, value in percentageCategory.items():
-        percentagesReverse.append((key, value))
-    percentagesReverse.sort(reverse=True)
+        # Get the value of percentage of withdrawals for each category
+        key = round((key / totalWithdrawals) * 100)
+        percentageList.append(key)
+        categoryList.append(value)
 
     # Get the category with the name with the most characters and store the categories into a list
     # for later printing configuring
-    charCount = 0
-    categoryList = list()
-    percentageList = list()
-    space = ""
     for category in categories:
         if len(category.categoryName) > charCount:
             charCount = len(category.categoryName)
-
-    for i in percentagesReverse:
-        percentageList.append(i[0])
-        categoryList.append(i[1])
     
     # Convert the value of the elements in percentageList into the number of 'o' to print in the graphic
     numberOfOs = 0
@@ -162,7 +152,7 @@ def create_spend_chart(categories):
         numberOfOs = round(i/10)
         # Update the item in the corresponding index using index() funcition and passing the number of i
         # The blank spaces are necessary to add to print vertically correctly
-        if numberOfOs == 0 or numberOfOs == 1:
+        if numberOfOs == 0:
             percentageList[percentageList.index(i)] = "          o"
         else:
             numberOfOs += 1
@@ -190,23 +180,23 @@ def create_spend_chart(categories):
     # Vertical graphic
     for i in range(100, -10, -10):
         # Store the vertical numbers
-        yAxis.append(f"{i:>3}|")
+        yAxis.append(f"{i:>3}| ")
         
     # Put the 'o's into a string variable then convert the string into a list
     # with the 'o's and spaces in the proper order for later printing
     for i in range(11):
         for o in percentageList:
-            meassurement += (f" {o[i]} ")
+            meassurement += (f"{o[i]}  ")
     
     # split the meassurement list every number of categories and append i to meassurementList
     length = len(categoryList)
     while meassurement:
-        meassurementList.append(meassurement[:length * 3])
-        meassurement = meassurement[length * 3:]
+        meassurementList.append(meassurement[:length * length])
+        meassurement = meassurement[length * length:]
 
     # Use zip() to join the yAxis and meassurementList lists into one
     preGraphics = [x for y in zip(yAxis, meassurementList) for x in y]
-
+  
     # Join each two pair of elements in preGraphics and concatenate them in the variable
     # to be passed as the first part of the graphics
     odd = ""
@@ -215,50 +205,101 @@ def create_spend_chart(categories):
     for i in range(len(preGraphics)):
         if i % 2 != 0:
             odd = preGraphics[i]
-            
         elif i % 2 == 0:
             even = preGraphics[i]
             if even == even:
                 continue
+        # Remove the right blank space if it is the last element
+        if preGraphics[i] == preGraphics[-1]:
+            odd = f"{preGraphics[-1].rstrip(' ')}"
         
         graphics += f"{even}{odd}\n"
 
     # Vertical categories
     for i in range(charCount):
-        for vertical in categoryList: 
+        for horizontal in categoryList: 
             # Print like this if the category is the first one
-            if  vertical == categoryList[0]:
-                categoriesToPrint += f"     {vertical[i]} "
+            if  horizontal == categoryList[0]:
+                categoriesToPrint += f"     {horizontal[i]} "
+            # Print like this if it is the last one
+            elif horizontal == categoryList[-1]:
+                categoriesToPrint += f" {horizontal[i]}"
             # Print like this for the rest
             else:
-                categoriesToPrint += f" {vertical[i]} "
+                categoriesToPrint += f" {horizontal[i]} "
         categoriesToPrint += "\n"
 
     # Variable to return with the configured chart
-    printable = graphicsTitle + graphics + divisoryLine + categoriesToPrint
+    printable = graphicsTitle + graphics + divisoryLine + categoriesToPrint.rstrip("\n")
 
     return printable
     
     
-    
-    
 food = Category("Food")
-food.deposit(1000, "initial deposit")
-food.withdraw(10.15, "groceries")
-food.withdraw(15.89, "restaurant and more food for dessert")
-print(food.get_balance())
-clothing = Category("Clothing")
-food.transfer(50, clothing)
-print(food.get_balance())
-clothing.withdraw(25.55)
-print(clothing.get_balance())
-clothing.withdraw(100)
-print(clothing.get_balance())
-auto = Category("Auto")
-auto.deposit(1000, "initial deposit")
-auto.withdraw(15)
+entertainment = Category("Entertainment")
+business = Category("Business")
 
+food.deposit(900, "deposit")
+
+food.deposit(45.56)
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+
+food.deposit(900, "deposit")
+good_withdraw = food.withdraw(45.67)
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+transfer_amount = 20
+print(food.get_balance())
+entertainment_balance_before = entertainment.get_balance()
+food.transfer(transfer_amount, entertainment)
+print(food.get_balance())
+print(entertainment.get_balance())
+
+food.deposit(10, "deposit")
+
+food.deposit(100, "deposit")
+food.withdraw(100.10)
+
+food.deposit(100, "deposit")
+food.transfer(200, entertainment)
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+food.transfer(20, entertainment)
+
+food.deposit(900, "deposit")
+entertainment.deposit(900, "deposit")
+business.deposit(900, "deposit")
+food.withdraw(105.55)
+entertainment.withdraw(33.40)
+business.withdraw(10.99)
 print(food)
-print(clothing)
+print(entertainment)
+print(business)
+print(create_spend_chart([business, food, entertainment]))
 
-print(create_spend_chart([food, clothing, auto]))
+
+################################################################
+# food = Category("Food")
+# food.deposit(1000, "initial deposit")
+# food.withdraw(10.15, "groceries")
+# food.withdraw(15.89, "restaurant and more food for dessert")
+# print(food.get_balance())
+# clothing = Category("Clothing")
+# food.transfer(50, clothing)
+# clothing.withdraw(25.55)
+# clothing.withdraw(100)
+# auto = Category("Auto")
+# auto.deposit(1000, "initial deposit")
+# auto.withdraw(15)
+
+# print(food)
+# print(clothing)
+
+# print(create_spend_chart([food, clothing, auto]))

@@ -120,3 +120,72 @@ def create_spend_chart(categories): #Expenses chart
         y = y + 1
     title = title.rstrip("\n")
     return title
+
+
+food = Category("Food")
+entertainment = Category("Entertainment")
+business = Category("Business")
+
+food.deposit(900, "deposit")
+
+food.deposit(45.56)
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+
+food.deposit(900, "deposit")
+good_withdraw = food.withdraw(45.67)
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+transfer_amount = 20
+print(food.get_balance())
+entertainment_balance_before = entertainment.get_balance()
+food.transfer(transfer_amount, entertainment)
+print(food.get_balance())
+print(entertainment.get_balance())
+
+food.deposit(10, "deposit")
+
+food.deposit(100, "deposit")
+food.withdraw(100.10)
+
+food.deposit(100, "deposit")
+food.transfer(200, entertainment)
+
+food.deposit(900, "deposit")
+food.withdraw(45.67, "milk, cereal, eggs, bacon, bread")
+food.transfer(20, entertainment)
+
+food.deposit(900, "deposit")
+entertainment.deposit(900, "deposit")
+business.deposit(900, "deposit")
+food.withdraw(105.55)
+entertainment.withdraw(33.40)
+business.withdraw(10.99)
+print(food)
+print(entertainment)
+print(business)
+print(create_spend_chart([business, food, entertainment]))
+
+################################################################
+# food = Category("Food")
+# food.deposit(1000, "initial deposit")
+# food.withdraw(10.15, "groceries")
+# food.withdraw(15.89, "restaurant and more food for dessert")
+# print(food.get_balance())
+# clothing = Category("Clothing")
+# food.transfer(50, clothing)
+# clothing.withdraw(25.55)
+# clothing.withdraw(100)
+# auto = Category("Auto")
+# auto.deposit(1000, "initial deposit")
+# auto.withdraw(15)
+
+# print(food)
+# print(clothing)
+
+# print(create_spend_chart([food, clothing, auto]))
