@@ -108,7 +108,7 @@ def create_spend_chart(categories): #Expenses chart
         for key, value in percentage.items(): # add the category names for x axis values
             category_name = key
             try:    
-                rows +=  category_name[y] + "  "
+                rows +=  category_name[y] + "    "
             except: 
                 rows += "   "
         

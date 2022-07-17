@@ -11,10 +11,11 @@ class Category:
 
     # Method to register the withdrawals
     def withdraw(self, amount, description=""):
-        # The nature of the withdrawal movements is to subtract, thus the amount is converted to a negative number
-        amount = amount * -1
         # Verify if the withdrawal movement returns a positive balance, if not don't add it to ledger()
         validation = self.check_funds(amount)
+
+        # The nature of the withdrawal movements is to subtract, thus the amount is converted to a negative number
+        amount = amount * -1
         
         if validation == True:
             self.ledger.append({"amount": amount, "description": description})
@@ -46,7 +47,7 @@ class Category:
         transferCategoryName = budgetCategory.categoryName
         
         # Determine if there are enough funds in the budget category 
-        if budget - amount < 0:
+        if amount > budget:
             return False
         # If enough funds, withdraw them from the source category and register in the Category.ledger variable
         else:
@@ -68,23 +69,10 @@ class Category:
         # If not enough funds only return False and don't add funds to any of the 
 
     def check_funds(self, withdraw):
-        dictionaries = self.ledger
-        # List to store only the values of each dictionary
-        value = list()
-        values = list()
-        # Store in value() each dictionary value
-        for dictionary in dictionaries:
-            for i in dictionary.values():
-                value.append(i)
-        # Select the numeric values and stores them in values()
-        for i in value:
-            if type(i) == int or type(i) == float:
-                values.append(i)
+        # Check if the amount in ledger is enough to make a withdrawal
+        ledger = self.get_balance()
         
-        # Append the withdrawal movement to values()
-        values.append(withdraw)
-        
-        if sum(values) < 0:
+        if withdraw > ledger:
             return False
         else:
             return True
@@ -135,7 +123,7 @@ def create_spend_chart(categories):
     # Add the key and values to the list that are necessary to print the chart
     for key, value in percentageCategory.items():
         # Get the value of percentage of withdrawals for each category
-        key = round((key / totalWithdrawals) * 100)
+        key = (key / totalWithdrawals) * 100
         percentageList.append(key)
         categoryList.append(value)
 
@@ -153,6 +141,8 @@ def create_spend_chart(categories):
         # Update the item in the corresponding index using index() funcition and passing the number of i
         # The blank spaces are necessary to add to print vertically correctly
         if numberOfOs == 0:
+            percentageList[percentageList.index(i)] = "          o"
+        elif numberOfOs == 1:
             percentageList[percentageList.index(i)] = "          o"
         else:
             numberOfOs += 1
@@ -184,10 +174,16 @@ def create_spend_chart(categories):
         
     # Put the 'o's into a string variable then convert the string into a list
     # with the 'o's and spaces in the proper order for later printing
+    stripFinal = ""
     for i in range(11):
         for o in percentageList:
-            meassurement += (f"{o[i]}  ")
-    
+            if i == 10:
+                stripFinal = f"{o[i]:<}  "
+                meassurement += stripFinal
+            else:
+                meassurement += f"{o[i]}  "
+    meassurement = meassurement.rstrip(" ")
+  
     # split the meassurement list every number of categories and append i to meassurementList
     length = len(categoryList)
     while meassurement:
@@ -196,7 +192,7 @@ def create_spend_chart(categories):
 
     # Use zip() to join the yAxis and meassurementList lists into one
     preGraphics = [x for y in zip(yAxis, meassurementList) for x in y]
-  
+    
     # Join each two pair of elements in preGraphics and concatenate them in the variable
     # to be passed as the first part of the graphics
     odd = ""
@@ -204,17 +200,18 @@ def create_spend_chart(categories):
 
     for i in range(len(preGraphics)):
         if i % 2 != 0:
-            odd = preGraphics[i]
+            if i == len(preGraphics):
+                preGraphics[i] = f"{preGraphics[i].rstrip(' ')}"
+                even = f"{preGraphics[i]}  "
+            else:
+                even = f"{preGraphics[i]}"
         elif i % 2 == 0:
-            even = preGraphics[i]
-            if even == even:
+            odd = preGraphics[i]
+            if odd == odd:
                 continue
-        # Remove the right blank space if it is the last element
-        if preGraphics[i] == preGraphics[-1]:
-            odd = f"{preGraphics[-1].rstrip(' ')}"
-        
-        graphics += f"{even}{odd}\n"
-
+          
+        graphics += f"{odd}{even}\n"
+      
     # Vertical categories
     for i in range(charCount):
         for horizontal in categoryList: 
@@ -223,7 +220,7 @@ def create_spend_chart(categories):
                 categoriesToPrint += f"     {horizontal[i]} "
             # Print like this if it is the last one
             elif horizontal == categoryList[-1]:
-                categoriesToPrint += f" {horizontal[i]}"
+                categoriesToPrint += f" {horizontal[i]}  "
             # Print like this for the rest
             else:
                 categoriesToPrint += f" {horizontal[i]} "
