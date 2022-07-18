@@ -182,7 +182,7 @@ def create_spend_chart(categories):
                 meassurement += stripFinal
             else:
                 meassurement += f"{o[i]}  "
-    meassurement = meassurement.rstrip(" ")
+    meassurement = meassurement
   
     # split the meassurement list every number of categories and append i to meassurementList
     length = len(categoryList)
@@ -200,11 +200,8 @@ def create_spend_chart(categories):
 
     for i in range(len(preGraphics)):
         if i % 2 != 0:
-            if i == len(preGraphics):
-                preGraphics[i] = f"{preGraphics[i].rstrip(' ')}"
-                even = f"{preGraphics[i]}  "
-            else:
-                even = f"{preGraphics[i]}"
+            preGraphics[i] = f"{preGraphics[i]}"
+            even = f"{preGraphics[i]}"
         elif i % 2 == 0:
             odd = preGraphics[i]
             if odd == odd:
