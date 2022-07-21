@@ -29,19 +29,28 @@ class Rectangle:
     # Print the shape using a nested loop
     def get_picture(self):
         picture = ""
+
+        if self.width > 50 or self.heigth > 50: return "Too big for picture."
+        
         for i in range(self.heigth):
             for j in range(self.width):
                 picture += ("*")
             picture += ("\n")
         return picture
 
-    def get_amount_inside(self):
-        pass
+    # Calculate the number of times one shape fits into another and return an integer
+    def get_amount_inside(shape1, shape2):
+        shape1Width = shape1.width
+        shape1Heigth = shape1.heigth
+        shape2Width = shape2.width
+        shape2Heigth = shape2.heigth
+        
+        return int((shape1Width / shape2Width) * (shape1Heigth / shape2Heigth))
     
     # Return the string when the instance is represented
     def __str__(self):
-        rectangleStr = f"{self.__class__.__qualname__}(width= {self.width}, height= {self.heigth})"
-        squareStr = f"{self.__class__.__qualname__}(side= {self.width})"
+        rectangleStr = f"{self.__class__.__qualname__}(width={self.width}, height={self.heigth})"
+        squareStr = f"{self.__class__.__qualname__}(side={self.width})"
         
         if self.__class__.__qualname__ == "Rectangle":
             return rectangleStr
@@ -77,4 +86,4 @@ print(sq.get_picture())
 
 rect.set_height(8)
 rect.set_width(16)
-# print(rect.get_amount_inside(sq))
+print(rect.get_amount_inside(sq))
