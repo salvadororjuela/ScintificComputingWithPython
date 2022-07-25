@@ -33,14 +33,37 @@ class Hat:
                 if k != None:
                     self.contents.append(k)
         
-        print(self.contents)
+        print(f"Initial contents: {self.contents}")
             
-    def draw(self):
-        pass
-        
+    def draw(self, qtyDraw):
+        drawnBalls = list()
+        ball = ""
+        length = len(self.contents)
+        # Check that the numbers of ball to draw is less or equal than the quantity of balls in self.contents
+        if qtyDraw > len(self.contents):
+            return False
+        # Else remove randomly the number of balls passed in to the method in the qtyDraw attribute
+        else:
+            # Generate random numbers the number of times passed in
+            for i in range(qtyDraw):
+                # Every number generated will remove the ball in the position corresponding to the random number
+                # from self.contents and store it in the variable drawnBalls.
+                ball = random.randint(0, length - 1) # Randon number. Length resembles a position, it can't have the same amount of the length or it will be out of range, that's why 1 is subtract from length
+                
+                try:
+                    drawnBalls.append(copy.copy(self.contents[ball])) # Append to drawnBalls the element correspondig to the position ball (Random number)
+                except:
+                    print(f"ERROR 'Balls out of range'")
+
+                del self.contents[ball] # Delete the item from self.contents
+                # It is necessary to subtract 1 to len(self.contets) - 1 to avoid an error because the new generated number could be out of range
+                length -= 1
+                
+        return drawnBalls
 
 def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
     pass
 
 
 hat = Hat(blue=4, red=2, green=6)
+hat.draw(2)
